@@ -16,7 +16,7 @@ for(const route in routes){
     const target = routes[route];
     app.use(route, createProxyMiddleware({target}));
 }
-
+//Port number
 const PORT = 8000;
 app.listen(PORT, ()=> {
     console.log("API GATEWAY STARTED");
