@@ -29,6 +29,20 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  fullName: {
+    type: String,
+    required : true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  mobileNumber: {
+    type: Number,
+    required: true,
+    unique: true
+  }
 });
 
 // Create the LogInCollection model

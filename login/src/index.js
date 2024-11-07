@@ -38,24 +38,32 @@ async function verifyPassword(inputPassword, hashedPassword) {
 
 // Register endpoint
 app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { fullName, username, password, email, mobileNumber } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).send("Username and password are required");
+  // Validate that all fields are provided
+  if (!fullName || !username || !password || !email || !mobileNumber) {
+    return res.status(400).send("All fields (fullName, username, password, email, and mobileNumber) are required");
   }
 
   try {
-    // Check if user already exists
-    const existingUser = await LogInCollection.findOne({ username });
+    // Check if the user already exists by username or email
+    const existingUser = await LogInCollection.findOne({ 
+      $or: [{ username }, { email }] 
+    });
     if (existingUser) {
-      return res.status(400).send("User already exists");
+      return res.status(400).send("User with this username or email already exists");
     }
 
-    // Hash the password and store the user
+    // Hash the password before saving
     const hashedPassword = await hashPassword(password);
+
+    // Create and save the new user
     const newUser = new LogInCollection({
+      fullName,
       username,
       password: hashedPassword,
+      email,
+      mobileNumber,
     });
 
     await newUser.save();
@@ -65,6 +73,7 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
 
 // Login endpoint
 app.post("/login", async (req, res) => {
@@ -89,12 +98,23 @@ app.post("/login", async (req, res) => {
 
     // Generate an access token
     const token = generateAccessToken();
-    res.status(200).json({ message: "Login successful", token });
+
+    // Send response with additional user details
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      userDetails: {
+        fullName: user.fullName,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+      },
+    });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send("Internal server error");
   }
 });
+
 
 const { v4: uuidv4 } = require("uuid");
 
