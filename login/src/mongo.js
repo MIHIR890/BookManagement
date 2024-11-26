@@ -1,9 +1,7 @@
-
 const mongoose = require("mongoose");
 
 const mongoURI = "mongodb://localhost:27017/BookManagement"; // Replace with your MongoDB URI
 mongoose.set("strictQuery", true);
-
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, {
@@ -12,7 +10,6 @@ mongoose.connect(mongoURI, {
 })
 .then(() => console.log("MongoDB connected"))
 .catch((err) => console.error("MongoDB connection error:", err));
-
 
 // Define the User schema
 const userSchema = new mongoose.Schema({
@@ -31,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   fullName: {
     type: String,
-    required : true,
+    required: true,
   },
   email: {
     type: String,
@@ -41,12 +38,19 @@ const userSchema = new mongoose.Schema({
   mobileNumber: {
     type: Number,
     required: true,
-    unique: true
-  }
+    unique: true,
+  },
+  profilePicUrl: {
+    type: String, // URL to the profile picture
+    default: null, // Initialize as null if no picture is uploaded yet
+  },
+  userId: {
+    type: String, // URL to the profile picture
+    default: null, // Initialize as null if no picture is uploaded yet
+  },
 });
 
 // Create the LogInCollection model
-const LogInCollection = mongoose.model("logInCollection", userSchema);
+const LogInCollection = mongoose.model("LogInCollection", userSchema);
 
 module.exports = { LogInCollection };
-
