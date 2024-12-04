@@ -6,12 +6,16 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
+const bodyParser = require('body-parser');
+
 
 const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 
 // Paths for templates, static files, and uploads
@@ -87,18 +91,66 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+//google sign in endpoint
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    console.log('Received data:', req.body);  // Log the incoming data
+    const { userId, email, fullName, profilePicUrl } = req.body;
+
+    // Check if the user already exists
+    let existingUser = await LogInCollection.findOne({ userId });
+    if (existingUser) {
+      return res.status(200).json({
+        message: 'User already exists',
+        userDetails: {
+          userId: existingUser.userId,
+          fullName: existingUser.fullName,
+          email: existingUser.email,
+          mobileNumber: existingUser.mobileNumber,
+        },
+      });
+    }
+
+    // Create a new user document
+    const newUser = new LogInCollection({
+      userId,
+      email,
+      fullName,
+      profilePicUrl,
+      mobileNumber: null,
+      username: null,
+      password: null,
+    });
+
+    await newUser.save();
+    res.status(200).json({
+      message: 'User created successfully',
+      userDetails: {
+        userId: newUser.userId,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        mobileNumber: newUser.mobileNumber,
+      },
+    });
+  } catch (error) {
+    console.error("Error during signup:", error);  // Log error
+    res.status(500).json({ message: 'Error saving user data' });
+  }
+});
+
+
 
 // Login endpoint
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).send("Username and password are required");
   }
 
   try {
     // Find user by username
-    const user = await LogInCollection.findOne({ username });
+    const user = await LogInCollection.findOne({ email });
     if (!user) {
       return res.status(400).send("User not found");
     }
