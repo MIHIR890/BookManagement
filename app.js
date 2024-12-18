@@ -10,6 +10,10 @@ const connectToDatabase = require("./mongo"); // Adjust the path based on your f
 // Import routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const bookRoutes= require("./routes/bookRoutes");
+const favouriteBookRoutes= require("./routes/favouritBookRoutes");
+const audioBookRoutes= require("./routes/audioBookRoutes");
 connectToDatabase();
 
 
@@ -37,6 +41,10 @@ app.use("/uploads", express.static(uploadPath)); // Serve uploaded files
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", bookRoutes);
+app.use("/api", favouriteBookRoutes);
+app.use("/api", audioBookRoutes);
 
 // Start server
 app.listen(port, () => {
