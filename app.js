@@ -5,6 +5,8 @@ const multer = require("multer");
 const moment = require("moment-timezone");
 const crypto = require("crypto");
 const connectToDatabase = require("./mongo"); // Adjust the path based on your file structure
+require("dotenv").config();
+
 
 
 // Import routes

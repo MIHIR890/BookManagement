@@ -2,6 +2,16 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 const LogInCollection = require("../models/userModel");
+const jwt = require("jsonwebtoken");
+
+
+
+
+const generateAccessToken = () => {
+    return crypto.randomBytes(64).toString("hex");
+  };
+
+  const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "your_secret_key";
 
 // Helper to hash password
 const hashPassword = async (password) => {
@@ -14,10 +24,10 @@ const verifyPassword = async (inputPassword, hashedPassword) => {
   return await bcrypt.compare(inputPassword, hashedPassword);
 };
 
-// Generate random access token
-const generateAccessToken = () => {
-  return crypto.randomBytes(64).toString("hex");
-};
+// // Generate random access token
+// const generateAccessToken = () => {
+//   return crypto.randomBytes(64).toString("hex");
+// };
 
 // Register new user
 exports.registerUser = async (req, res) => {
@@ -71,7 +81,12 @@ exports.loginUser = async (req, res) => {
       return res.status(400).send("Invalid password");
     }
 
-    const token = generateAccessToken();
+    // const token = generateAccessToken();
+    const token = jwt.sign(
+      { userId: user.userId, email: user.email }, // Payload
+      JWT_SECRET_KEY, // Secret Key
+      { expiresIn: "1h" } // Expiration time
+    );
     res.status(200).json({
       message: "Login successful",
       token,
