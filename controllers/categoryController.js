@@ -52,6 +52,7 @@ async function getCategoryList(req, res) {
     }
 
     res.status(200).json({
+      status: 'S',
       message: 'Category List is fetched',
       data: categories,
     });
