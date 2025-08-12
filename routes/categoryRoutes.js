@@ -8,6 +8,9 @@ const authenticateToken = require('../controllers/authenticatetoken'); // Import
 router.post('/addCategory', authenticateToken, addCategory);
 
 // Route to fetch all categories
-router.get('/getCategoryList',authenticateToken, getCategoryList);
+//authentication
+// router.get('/getCategoryList',authenticateToken, getCategoryList);
+router.get('/getCategoryList', getCategoryList);
+
 
 module.exports = router;

@@ -73,13 +73,13 @@ exports.loginUser = async (req, res) => {
   try {
     const user = await LogInCollection.findOne({ email });
     if (!user) {
-      return res.status(400).send("User not found");
-    }
-
+  res.status(200).json({
+      message: "User Not Found ",    })};
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).send("Invalid password");
-    }
+  res.status(200).json({
+      message: "Invalid Password ",    })};
+    
 
     // const token = generateAccessToken();
     const token = jwt.sign(

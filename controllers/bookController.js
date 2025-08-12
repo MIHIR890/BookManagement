@@ -75,8 +75,8 @@ async function addBooks(req, res) {
 async function getBookList(req, res) {
     try{
 
-        const{ categoryId } = req.body;
-                console.log(categoryId);
+        const { categoryId } = req.body;
+        console.log(categoryId);
 
         if(!categoryId){
             res.status(400).json({

@@ -8,7 +8,9 @@ console.log(typeof getBookList);
 
 // Route to add a category
 router.post('/newaudioBook',authenticateToken, newAudioBook);
-router.get('/audioBook', authenticateToken,getAudioBook )
+// router.get('/audioBook', authenticateToken,getAudioBook )
+router.get('/audioBook',getAudioBook )
+
 
 
 // Route to fetch all categories
