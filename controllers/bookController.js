@@ -87,13 +87,16 @@ async function getBookList(req, res) {
 
         if(fetchBooks.length != 0){
             return res.status(200).json({
+                status:'S',
                 message: "Books list are fetched",
                 data : fetchBooks
             })
         }
         else{
             return res.status(200).json({
-                message : "Books not found"
+                status:'F',
+                message : "Books not found",
+                data : null
             });
         }
     }
