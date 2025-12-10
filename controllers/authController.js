@@ -67,27 +67,31 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send("Email and password are required");
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
   try {
     const user = await LogInCollection.findOne({ email });
+
+    // Check if user exists
     if (!user) {
-  res.status(200).json({
-      message: "User Not Found ",    })};
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify password
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
-  res.status(200).json({
-      message: "Invalid Password ",    })};
-    
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
-    // const token = generateAccessToken();
+    // Generate token
     const token = jwt.sign(
-      { userId: user.userId, email: user.email }, // Payload
-      JWT_SECRET_KEY, // Secret Key
-      { expiresIn: "1h" } // Expiration time
+      { userId: user.userId, email: user.email },
+      JWT_SECRET_KEY,
+      { expiresIn: "1h" }
     );
-    res.status(200).json({
+
+    return res.status(200).json({
       message: "Login successful",
       token,
       userDetails: {
@@ -99,9 +103,24 @@ exports.loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).send("Internal server error");
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.logoutUser = async (req, res) => {
+  try {
+    // No server-side action required for JWT logout
+    return res.status(200).json({
+      
+      message: "Logout successful"
+    });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 
 // Google sign-in
 exports.googleSignUp = async (req, res) => {
@@ -119,9 +138,9 @@ exports.googleSignUp = async (req, res) => {
       email,
       fullName,
       profilePicUrl,
-      mobileNumber: null,
-      username: null,
-      password: null,
+      // mobileNumber: null,
+      username: fullName,
+      // password: null,
     });
 
     await user.save();
